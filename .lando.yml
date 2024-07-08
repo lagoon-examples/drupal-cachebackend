@@ -1,0 +1,6 @@
+name: drupal-cachebackend
+recipe: lagoon
+config:
+  flavor: drupal
+  build:
+    - composer install
