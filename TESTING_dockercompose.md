@@ -70,13 +70,13 @@ docker compose exec -T cli bash -c "yarn --version"
 docker compose exec -T cli bash -c "curl -kL http://nginx:8080" | grep "Drush Site-Install"
 
 # redis-7 Should be running Redis v7.0
-docker-compose exec -T redis sh -c "redis-server --version" | grep "v=7."
+docker compose exec -T redis sh -c "redis-server --version" | grep "v=7."
 
 # redis-7 Should be able to see Redis databases
-docker-compose exec -T redis sh -c "redis-cli CONFIG GET databases"
+docker compose exec -T redis sh -c "redis-cli CONFIG GET databases"
 
 # redis-7 databases should be populated
-docker-compose exec -T redis sh -c "redis-cli dbsize" | grep -Ev "^0$"
+docker compose exec -T redis sh -c "redis-cli dbsize" | grep -Ev "^0$"
 
 # Should be able to db-export and db-import the database
 docker compose exec -T cli bash -c "drush sql-dump --result-file /app/test.sql"
