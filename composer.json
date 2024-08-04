@@ -25,8 +25,7 @@
         "drupal/core-recommended": "10.3.1",
         "drupal/lagoon_logs": "3.0.1",
         "drupal/redis": "1.7.0",
-        "drush/drush": "12.5.2",
-        "zaporylie/composer-drupal-optimizations": "1.2.0"
+        "drush/drush": "13.0.0"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -34,14 +33,12 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config":{
-        "platform": {"php": "8.1.12"},
         "sort-packages": true,
         "allow-plugins": {
             "composer/installers": true,
             "cweagans/composer-patches": true,
             "drupal/core-composer-scaffold": true,
             "drupal/core-project-message": true,
-            "zaporylie/composer-drupal-optimizations": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "phpstan/extension-installer": true,
             "php-http/discovery": true
@@ -65,7 +62,6 @@
             "file-mapping": {
                 "[web-root]/sites/default/all.settings.php": "assets/all.settings.php",
                 "[web-root]/sites/default/redis-unavailable.services.yml": "assets/redis-unavailable.services.yml"
-
             },
             "locations": {
                 "web-root": "web/"
