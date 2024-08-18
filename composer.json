@@ -24,7 +24,7 @@
         "drupal/core-project-message": "10.3.2",
         "drupal/core-recommended": "10.3.2",
         "drupal/lagoon_logs": "3.0.1",
-        "drupal/redis": "1.7.0",
+        "drupal/redis": "1.8.0",
         "drush/drush": "13.0.1"
     },
     "conflict": {
