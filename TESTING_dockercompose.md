@@ -14,7 +14,7 @@ sed -i -e "/###/d" docker-compose.yml
 docker network inspect amazeeio-network >/dev/null || docker network create amazeeio-network
 docker compose down
 
-# Should start up our Lagoon Drupal 9 site successfully
+# Should start up our Lagoon Drupal site successfully
 docker compose build && docker compose up -d
 
 # Ensure mariadb pod is ready to connect
@@ -66,7 +66,7 @@ docker compose exec -T cli bash -c "node --version"
 # Should have yarn
 docker compose exec -T cli bash -c "yarn --version"
 
-# Should have a running Drupal 9 site served by nginx on port 8080
+# Should have a running Drupal site served by nginx on port 8080
 docker compose exec -T cli bash -c "curl -kL http://nginx:8080" | grep "Drush Site-Install"
 
 # redis-7 Should be running Redis v7.0
@@ -100,6 +100,6 @@ Destroy tests
 Run the following commands to trash this app like nothing ever happened.
 
 ```bash
-# Should be able to destroy our Drupal 9 site with success
+# Should be able to destroy our Drupal site with success
 docker compose down --volumes --remove-orphans
 ```
