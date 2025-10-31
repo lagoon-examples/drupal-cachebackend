@@ -1,8 +1,10 @@
 {
-  "baseBranches": [
+  "baseBranchPatterns": [
     "main"
   ],
-  "extends": ["config:base"],
+  "extends": [
+    "config:recommended"
+  ],
   "automerge": true,
   "automergeType": "pr",
   "dependencyDashboard": true,
@@ -12,9 +14,14 @@
   },
   "packageRules": [
     {
-      "datasources": ["packagist"],
-      "updateTypes": ["patch", "minor"],
-      "packageNames": [
+      "matchDatasources": [
+        "packagist"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
+      "matchPackageNames": [
         "drupal/core-dev-pinned",
         "drupal/core-recommended",
         "drupal/core-composer-scaffold",
@@ -23,9 +30,13 @@
       "groupName": "Drupal Core"
     },
     {
-      "datasources": ["packagist"],
-      "updateTypes": ["major"],
-      "packageNames": [
+      "matchDatasources": [
+        "packagist"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchPackageNames": [
         "drupal/core-dev-pinned",
         "drupal/core-recommended",
         "drupal/core-composer-scaffold",
@@ -34,7 +45,9 @@
       "enabled": false
     },
     {
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "GitHub actions"
     }
   ]
