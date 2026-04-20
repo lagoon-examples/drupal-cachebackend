@@ -34,26 +34,38 @@ if (getenv('LAGOON')) {
     $redis = new \Redis();
     $redis_host = getenv('REDIS_HOST') ?: 'redis';
     $redis_port = getenv('REDIS_SERVICE_PORT') ?: 6379;
+    $redis_password = getenv('REDIS_PASSWORD') ?: '';
+
     try {
         # Do not use the cache during installations of Drupal.
         if (InstallerKernel::installationAttempted()) {
-        throw new \Exception('Drupal installation underway.');
+          throw new \Exception('Drupal installation underway.');
         }
     
         # Use a timeout to ensure that if the Redis pod is down, that Drupal will
         # continue to function.
         if ($redis->connect($redis_host, $redis_port, 1) === FALSE) {
-        throw new \Exception('Redis server unreachable.');
+          throw new \Exception('Redis server unreachable.');
         }
-    
+
+        # Authenticate with the password if provided
+        if (!empty($redis_password)) {
+          if ($redis->auth($redis_password) === FALSE) {
+            throw new \Exception('Redis authentication failed');
+          }
+        }
+
         $response = $redis->ping();
         if (!$response) {
-        throw new \Exception('Redis could be reached but is not responding correctly.');
+          throw new \Exception('Redis could be reached but is not responding correctly.');
         }
             
         $settings['redis.connection']['interface'] = 'PhpRedis';
         $settings['redis.connection']['host'] = $redis_host;
         $settings['redis.connection']['port'] = $redis_port;
+        if (!empty($redis_password)) {
+          $settings['redis.connection']['password'] = $redis_password;
+        }
         $settings['cache_prefix']['default'] = getenv('REDIS_CACHE_PREFIX') ?: getenv('LAGOON_PROJECT') . '_' . getenv('LAGOON_GIT_SAFE_BRANCH');
     
         $settings['cache']['default'] = 'cache.backend.redis';
@@ -79,29 +91,29 @@ if (getenv('LAGOON')) {
         'parameters' => [],
         'services' => [
             'redis.factory' => [
-            'class' => 'Drupal\redis\ClientFactory',
+              'class' => 'Drupal\redis\ClientFactory',
             ],
             'cache.backend.redis' => [
-            'class' => 'Drupal\redis\Cache\CacheBackendFactory',
-            'arguments' => ['@redis.factory', '@cache_tags_provider.container', '@serialization.phpserialize'],
+              'class' => 'Drupal\redis\Cache\CacheBackendFactory',
+                'arguments' => ['@redis.factory', '@cache_tags_provider.container', '@serialization.phpserialize'],
+              ],
+              'cache.container' => [
+                'class' => '\Drupal\redis\Cache\PhpRedis',
+                'factory' => ['@cache.backend.redis', 'get'],
+                'arguments' => ['container'],
+              ],
+              'cache_tags_provider.container' => [
+                'class' => 'Drupal\redis\Cache\RedisCacheTagsChecksum',
+                'arguments' => ['@redis.factory'],
+              ],
+              'serialization.phpserialize' => [
+                'class' => 'Drupal\Component\Serialization\PhpSerialize',
+              ],
             ],
-            'cache.container' => [
-            'class' => '\Drupal\redis\Cache\PhpRedis',
-            'factory' => ['@cache.backend.redis', 'get'],
-            'arguments' => ['container'],
-            ],
-            'cache_tags_provider.container' => [
-            'class' => 'Drupal\redis\Cache\RedisCacheTagsChecksum',
-            'arguments' => ['@redis.factory'],
-            ],
-            'serialization.phpserialize' => [
-            'class' => 'Drupal\Component\Serialization\PhpSerialize',
-            ],
-        ],
-        ];
+          ];
         }
         catch (\Exception $error) {
-        $settings['container_yamls'][] = 'sites/default/redis-unavailable.services.yml';
-        $settings['cache']['default'] = 'cache.backend.null';
+          $settings['container_yamls'][] = 'sites/default/redis-unavailable.services.yml';
+          $settings['cache']['default'] = 'cache.backend.null';
         }
     }
